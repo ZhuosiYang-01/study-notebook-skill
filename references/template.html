@@ -1,0 +1,861 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学习笔记 · 模板示例</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fbfaf7;
+  --surface: #ffffff;
+  --surface-alt: #f3f0ea;
+  --accent: #8a6d3b;
+  --accent-soft: #e9dfc9;
+  --text: #2a251c;
+  --text-sub: #6a5f4e;
+  --text-muted: #9c9083;
+  --border: #e8e2d5;
+  --ok: #5b8a3a;
+  --serif: 'Noto Serif SC', serif;
+  --sans: 'Noto Sans SC', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 13px;
+  min-height: 100vh;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+  transition: grid-template-columns 0.3s ease;
+}
+.layout.sidebar-collapsed {
+  grid-template-columns: 0 1fr;
+}
+.sidebar {
+  background: var(--surface-alt);
+  border-right: 1px solid var(--border);
+  padding: 24px 18px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: padding 0.3s;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(138,109,59,0.2) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(138,109,59,0.18);
+  border-radius: 3px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover { background: rgba(138,109,59,0.4); }
+.layout.sidebar-collapsed .sidebar {
+  padding: 24px 0;
+  border-right: none;
+}
+.sidebar-inner {
+  width: 184px;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+.layout.sidebar-collapsed .sidebar-inner {
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar-title {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.sidebar-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 22px;
+}
+.outline { list-style: none; }
+.outline-chapter {
+  font-family: var(--serif);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  padding: 14px 10px 6px;
+  letter-spacing: 0.02em;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+.outline-chapter:first-child {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 4px;
+}
+.outline-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-sub);
+  display: flex;
+  gap: 8px;
+  margin-bottom: 2px;
+  transition: background 0.2s;
+  line-height: 1.5;
+}
+.outline-item:hover { background: rgba(138,109,59,0.08); color: var(--text); }
+.outline-item.active {
+  background: var(--accent-soft);
+  color: var(--text);
+  font-weight: 500;
+}
+.outline-num {
+  color: var(--accent);
+  font-size: 11px;
+  min-width: 30px;
+}
+
+.sidebar-toggle {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-sub);
+  z-index: 101;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: left 0.3s ease;
+  font-family: inherit;
+}
+.layout:not(.sidebar-collapsed) .sidebar-toggle {
+  left: 186px;
+  background: var(--surface-alt);
+}
+.sidebar-toggle:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.main {
+  padding: 48px 56px 120px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.breadcrumb {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+.section-sub {
+  color: var(--text-sub);
+  margin-bottom: 32px;
+  font-size: 13px;
+}
+
+.content-block { margin-bottom: 32px; }
+.chapter-heading {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 48px 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--accent);
+}
+.chapter-heading:first-of-type {
+  margin-top: 0;
+}
+.chapter-heading .chapter-num {
+  color: var(--accent);
+  margin-right: 10px;
+  font-size: 16px;
+  vertical-align: 2px;
+}
+.block-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.block-title::before {
+  content: '';
+  width: 3px;
+  height: 15px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.prose p {
+  margin-bottom: 12px;
+}
+.prose ul,
+.prose ol {
+  margin: 0 0 12px 20px;
+  padding: 0;
+}
+.prose li {
+  margin-bottom: 6px;
+  line-height: 1.7;
+}
+
+.callout {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin: 18px 0;
+  border-left: 4px solid var(--accent);
+  box-shadow: 0 1px 3px rgba(42,37,28,0.06);
+  font-size: 13px;
+}
+.callout .label {
+  font-size: 15px;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  margin-bottom: 10px;
+  display: block;
+  line-height: 1.4;
+}
+.callout p {
+  margin: 0 0 8px 0;
+  color: var(--text);
+  line-height: 1.75;
+}
+.callout p:last-child { margin-bottom: 0; }
+.callout ul, .callout ol {
+  margin: 6px 0 8px 20px;
+  color: var(--text);
+}
+.callout ul:last-child, .callout ol:last-child { margin-bottom: 0; }
+.callout li { margin-bottom: 4px; line-height: 1.7; }
+
+.pro-con {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
+}
+.pro, .con {
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.pro { background: #f0f5ea; border-left: 3px solid var(--ok); }
+.con { background: #fbf1ec; border-left: 3px solid #c56b40; }
+.pro .label, .con .label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 3px;
+}
+.pro .label { color: var(--ok); }
+.con .label { color: #c56b40; }
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.compare-table th,
+.compare-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.compare-table th {
+  background: var(--surface-alt);
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--text-sub);
+  letter-spacing: 0.05em;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table td:first-child {
+  color: var(--text-sub);
+  font-weight: 500;
+  width: 120px;
+}
+
+.my-note {
+  background: #fffbef;
+  border: 1px dashed #d4b879;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  font-size: 12px;
+  color: #6a5524;
+}
+.my-note .label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a3822c;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.edit-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 100px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+.edit-toggle.active { background: #c56b40; }
+[contenteditable="true"] {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+  cursor: text;
+  background: rgba(255, 251, 239, 0.5);
+}
+[contenteditable="true"]:focus {
+  outline: 2px solid #c56b40;
+  background: rgba(255, 251, 239, 1);
+}
+.edit-banner {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 11px;
+  display: none;
+  z-index: 100;
+}
+.edit-banner.show { display: block; }
+.edit-banner kbd {
+  background: rgba(255,255,255,0.2);
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin: 0 2px;
+  font-family: monospace;
+  font-size: 10px;
+}
+.save-indicator {
+  position: fixed;
+  top: 18px;
+  right: 120px;
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 100;
+  padding-top: 6px;
+}
+.save-indicator.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<button class="sidebar-toggle" id="sidebarToggle" title="收起/展开侧边栏">‹</button>
+<button class="edit-toggle" id="editToggle">✎ 编辑</button>
+<span class="save-indicator" id="saveIndicator">已保存</span>
+<div class="edit-banner" id="editBanner">
+  编辑模式 · 点击任意文字修改 · <kbd>Ctrl+S</kbd> 保存 · 再按 <kbd>E</kbd> 退出
+</div>
+
+<div class="layout" id="layout">
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-title">学习笔记</div>
+      <div class="sidebar-sub">模板示例</div>
+      <ul class="outline" id="outline"></ul>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <h1 class="section-title" id="sectionTitle"></h1>
+    <p class="section-sub" id="sectionSub"></p>
+    <div id="chaptersContainer"></div>
+  </main>
+</div>
+
+<script>
+// ============================================================
+// chapters: 笔记的内容数据
+// ------------------------------------------------------------
+// 三种类型的条目，按顺序混排：
+//   { type: 'meta', ... }     第一项，整体标题/副标题/breadcrumb
+//   { type: 'chapter', ... }  一级标题（章），在正文和侧边栏都渲染为大标题
+//   { type: 'section', ... }  二级标题（节），实际承载内容的 blocks
+//
+// chapter 和 section 平级顺序排列。chapter 出现即代表"后续
+// section 都属于这一章"，直到下一个 chapter 条目为止。
+//
+// 注意事项：
+// - blocks 里的 html 字段是模板字符串，里面如果出现反引号 ` 或
+//   ${} 要注意转义，否则会打断字符串
+// - 修改 chapters 的内容是正常操作；除非结构需要升级，否则
+//   不要动下面 render / save / load 等脚本逻辑
+// ============================================================
+// ============================================================
+// chapters: 笔记的内容数据
+// ------------------------------------------------------------
+// 三种类型的条目，按顺序混排：
+//   { type: 'meta', ... }     第一项，整体标题/副标题/breadcrumb
+//   { type: 'chapter', ... }  一级标题（章），正文和侧边栏都渲染
+//   { type: 'section', ... }  二级标题（节），实际承载内容的 blocks
+//
+// chapter 和 section 平级顺序排列。chapter 出现即代表"后续 section
+// 都属于这一章"，直到下一个 chapter 条目为止。
+//
+// 这个文件是模板示例——每个 section 演示一种或几种 block 写法。
+// 实际新建笔记时整组替换 chapters 数组，保留 CSS、JS、render 不动。
+//
+// 注意：blocks 里 html 字段是模板字符串，出现反引号 ` 或 ${...} 要转义
+// ============================================================
+const chapters = [
+  {
+    id: 'meta',
+    type: 'meta',
+    breadcrumb: '学习笔记 · 模板示例',
+    title: '学习笔记模板示例',
+    subtitle: '演示每种 block 的写法和适用场景'
+  },
+
+  { type: 'chapter', num: '第 1 章', title: '正文与列表' },
+
+  {
+    id: 'concept',
+    type: 'section',
+    navLabel: { num: '1.1', text: '概念介绍' },
+    title: '1.1 概念介绍：两段式正文',
+    blocks: [
+      { kind: 'prose',
+        html: `<p>RAG（Retrieval-Augmented Generation，检索增强生成）是一种让大模型在回答前先去外部知识库或网页检索资料，再基于检索结果组织答案的架构。本质是把"模型记忆"换成"实时检索 + 模型综合"。</p>
+<p>通俗地说，没有 RAG 的模型像一个不能查资料的考生，全靠记忆答题；有了 RAG，模型可以先翻书再答——答案更新、更准、可追溯。</p>`
+      }
+    ]
+  },
+
+  {
+    id: 'distinction',
+    type: 'section',
+    navLabel: { num: '1.2', text: '概念辨析' },
+    title: '1.2 概念辨析：RAG vs 微调',
+    blocks: [
+      { kind: 'prose',
+        html: `<p>RAG 和微调（Fine-tuning）经常被放在一起讨论，但解决的问题完全不同：</p>
+<ul>
+<li><strong>RAG</strong>：解决"模型不知道这件事"的问题——通过给它实时资料补足知识盲区，适合知识更新快、长尾事实多的场景。</li>
+<li><strong>微调</strong>：解决"模型不会这种说话方式"的问题——通过额外训练让模型学会某种风格、格式、专业术语，适合输出形态固定的任务。</li>
+</ul>
+<p>两者不是互斥的——很多生产系统同时用：微调让模型懂行业语言，RAG 让它有最新信息。</p>`
+      }
+    ]
+  },
+
+  {
+    id: 'list-and-order',
+    type: 'section',
+    navLabel: { num: '1.3', text: '列表与顺序' },
+    title: '1.3 列表与顺序：bullet vs ol',
+    blocks: [
+      { kind: 'prose',
+        html: `<p><strong>平行枚举用 bullet</strong>——项与项之间没有先后关系：</p>
+<ul>
+<li><strong>事实型 Query</strong>：只要答案准确</li>
+<li><strong>解释型 Query</strong>：要清晰易懂</li>
+<li><strong>决策型 Query</strong>：要多源对比</li>
+<li><strong>操作型 Query</strong>：要步骤具体</li>
+</ul>
+<p><strong>有顺序的流程用 ol</strong>——项与项之间有先后或层层过滤：</p>
+<ol>
+<li><strong>发现 Bad Case</strong>：用户负反馈、人工抽检、数据异常</li>
+<li><strong>归因到链路环节</strong>：召回错？排序错？生成跑偏？</li>
+<li><strong>归纳成问题模式</strong>：多个 Bad Case 的共性</li>
+<li><strong>设计优化方案</strong>：规则型 / 模型型 / 交互型</li>
+<li><strong>AB 实验验证</strong>：小流量跑、看数据、决定上线或回滚</li>
+</ol>
+<p>判断要点：能用 bullet 或 ol 表达的，就不要套表格或卡片——简洁的列表反而最易扫读。</p>`
+      }
+    ]
+  },
+
+  { type: 'chapter', num: '第 2 章', title: '表格与对比' },
+
+  {
+    id: 'compare-horizontal',
+    type: 'section',
+    navLabel: { num: '2.1', text: '横向对比表格' },
+    title: '2.1 横向对比表格（compareTable）',
+    blocks: [
+      { kind: 'prose',
+        html: `<p>多方案多维度对比时用 compareTable。每一列是一个方案，每一行是一个维度。第一列自动有浅色背景，适合放维度名。</p>`
+      },
+
+      { kind: 'compareTable',
+        headers: ['维度', '传统搜索', 'AI 搜索', 'Chatbot'],
+        rows: [
+          ['核心交付物', '链接列表（10 蓝链）', '综合答案 + 来源引用', '对话回复'],
+          ['信息来源', '索引过的网页', '实时检索 + 大模型生成', '大模型训练知识'],
+          ['实时性', '实时', '实时', '训练截止日，可能过时'],
+          ['典型 Query', '找网站、找资料', '找答案、做决策', '写作、头脑风暴、编程']
+        ]
+      },
+
+      { kind: 'prose',
+        html: `<p>列数控制在 4 列以内最舒服，超过 5 列在窄屏上会换行频繁，建议改用<strong>行列转置</strong>形式（见 2.2）。</p>`
+      }
+    ]
+  },
+
+  {
+    id: 'compare-flipped',
+    type: 'section',
+    navLabel: { num: '2.2', text: '行列转置表格' },
+    title: '2.2 行列转置表格：维度作为行',
+    blocks: [
+      { kind: 'prose',
+        html: `<p>当方案数 ≤ 3 但每个方案要描述的维度长（每格几十字以上）时，用"行列转置"——维度作为行、方案作为列。窄屏下不会过宽。</p>`
+      },
+
+      { kind: 'compareTable',
+        headers: ['', '关键词召回', '向量召回', '混合召回'],
+        rows: [
+          ['原理', '基于倒排索引按字面匹配', '把 query 和文档编码成向量，按距离找近邻', '并行多路 + 融合算法（RRF 等）合并'],
+          ['优势', '快、可解释、对专有名词最准', '能覆盖同义、近义、跨词形', '兼顾"字面准"和"意思对"，几乎无漏'],
+          ['弱点', '搜"火锅"召不到"麻辣烫"——纯字面盲区', '可能召回"相关但无用"的内容', '工程复杂，融合策略要调'],
+          ['适用场景', 'ID、型号、专名查询', '语义模糊、自然语言查询', '生产环境的默认方案']
+        ]
+      }
+    ]
+  },
+
+  {
+    id: 'pro-con',
+    type: 'section',
+    navLabel: { num: '2.3', text: '优缺点对比' },
+    title: '2.3 优缺点对比（proCon）',
+    blocks: [
+      { kind: 'prose',
+        html: `<p>单一方案的优缺点用 proCon——绿红双列，比纯文字"优点是…缺点是…"更好扫读。每边字数控制在两三句内，太长就换 prose 写。</p>`
+      },
+
+      { kind: 'proCon',
+        pros: '复杂任务能拆给不同专长的 Agent 并行处理，质量比单 Agent 高；某个 Agent 失败可以重试或绕过，容错性好。',
+        cons: '比单 Agent 慢 3-5 倍（受最慢那一路限制 + 拆分汇总的额外调用）；协调开销高，简单任务上是浪费；调试和归因更复杂。'
+      }
+    ]
+  },
+
+  { type: 'chapter', num: '第 3 章', title: '强调与提示（callout）' },
+
+  {
+    id: 'callout-counterintuitive',
+    type: 'section',
+    navLabel: { num: '3.1', text: '反直觉判断' },
+    title: '3.1 callout 用法一：反直觉判断',
+    blocks: [
+      { kind: 'prose',
+        html: `<p>callout 只用于真正反直觉、独立陷阱、或可复用的精华原话——不要用来做"补充背景"或"重要但不反直觉"的强调。下面是一个反直觉判断的范例（读者第一反应是"啊？"的那种）：</p>`
+      },
+
+      { kind: 'callout', label: '多 Agent 更慢而不是更快',
+        html: `<p>直觉上并行应该更快，但多 Agent 实际比单 Agent 慢 3-5 倍——原因是：总时间 = 最慢那一路的时间（木桶短板）；主 Agent 的任务拆分和结果汇总是额外的大模型调用；子 Agent 之间如果有依赖就退化成串行。多 Agent 的价值是<strong>用时间换质量</strong>，不是换速度。</p>`
+      }
+    ]
+  },
+
+  {
+    id: 'callout-trap',
+    type: 'section',
+    navLabel: { num: '3.2', text: '独立陷阱' },
+    title: '3.2 callout 用法二：独立陷阱',
+    blocks: [
+      { kind: 'prose',
+        html: `<p>另一种 callout 用法——独立于正文的陷阱/风险，不突出就会被读者忽略、且后果严重：</p>`
+      },
+
+      { kind: 'callout', label: '最危险的信号：所有短期指标正向，但复访率降了',
+        html: `<p>这是 AI 产品最危险的信号——用户第一次用觉得好玩但没解决真实问题（新鲜感耗尽）；答案看似准但深入核对后发现错（信任流失）；竞品出了更好产品（用户转移）。这种情况下短期数据会骗人，只有复访率会诚实告诉你产品的真实价值。</p>`
+      }
+    ]
+  },
+
+  {
+    id: 'callout-quote',
+    type: 'section',
+    navLabel: { num: '3.3', text: '精华原话' },
+    title: '3.3 callout 用法三：可复用的精华原话',
+    blocks: [
+      { kind: 'prose',
+        html: `<p>第三种 callout 用法——可直接拿去面试 / 汇报 / 答辩的精华原话或一句口诀：</p>`
+      },
+
+      { kind: 'callout', label: '面试可用的战略叙事',
+        html: `<p>"百度做 AI 搜索是一个防御性 + 背水一战的决策。短期防御用户迁移到 ChatGPT/豆包/抖音，长期押注 AI 是搜索的未来形态。这个岗位做的不是一个增量功能，而是百度搜索业务未来三到五年的核心形态。"</p>`
+      }
+    ]
+  }
+];
+
+const STORAGE_KEY = 'study-notebook-template';
+let myEdits = {};
+let myNotes = {};
+let isEditing = false;
+
+function getValue(chId, path, defaultVal) {
+  const key = `${chId}:${path}`;
+  return (myEdits[key] !== undefined) ? myEdits[key] : defaultVal;
+}
+
+function render() {
+  const meta = chapters.find(c => c.type === 'meta');
+  document.getElementById('breadcrumb').textContent = meta.breadcrumb;
+  document.getElementById('sectionTitle').textContent = meta.title;
+  document.getElementById('sectionSub').textContent = meta.subtitle;
+
+  const outline = document.getElementById('outline');
+  outline.innerHTML = '';
+  let firstSection = true;
+  chapters.forEach(ch => {
+    if (ch.type === 'chapter') {
+      const chEl = document.createElement('li');
+      chEl.className = 'outline-chapter';
+      chEl.textContent = ch.title;
+      outline.appendChild(chEl);
+    } else if (ch.type === 'section') {
+      const li = document.createElement('li');
+      li.className = 'outline-item' + (firstSection ? ' active' : '');
+      firstSection = false;
+      li.dataset.target = 'sec-' + ch.id;
+      li.innerHTML = `<span class="outline-num">${ch.navLabel.num}</span><span>${ch.navLabel.text}</span>`;
+      li.addEventListener('click', () => {
+        document.querySelectorAll('.outline-item').forEach(i => i.classList.remove('active'));
+        li.classList.add('active');
+        document.getElementById('sec-' + ch.id).scrollIntoView({ behavior: 'smooth' });
+      });
+      outline.appendChild(li);
+    }
+  });
+
+  const container = document.getElementById('chaptersContainer');
+  container.innerHTML = '';
+  chapters.forEach(ch => {
+    if (ch.type === 'chapter') {
+      const h1 = document.createElement('h2');
+      h1.className = 'chapter-heading';
+      h1.innerHTML = `<span class="chapter-num">${ch.num}</span>${ch.title}`;
+      container.appendChild(h1);
+      return;
+    }
+    if (ch.type !== 'section') return;
+    const section = document.createElement('section');
+    section.className = 'content-block';
+    section.id = 'sec-' + ch.id;
+
+    const h2 = document.createElement('h2');
+    h2.className = 'block-title';
+    h2.dataset.edit = `${ch.id}:title`;
+    h2.textContent = getValue(ch.id, 'title', ch.title);
+    section.appendChild(h2);
+
+    ch.blocks.forEach((block, bIdx) => {
+      const base = `block:${bIdx}`;
+      if (block.kind === 'prose') {
+        const div = document.createElement('div');
+        div.className = 'prose';
+        div.dataset.edit = `${ch.id}:${base}:html`;
+        div.innerHTML = getValue(ch.id, `${base}:html`, block.html);
+        section.appendChild(div);
+      } else if (block.kind === 'callout') {
+        const wrap = document.createElement('div');
+        wrap.className = 'callout';
+        wrap.innerHTML = `<div class="label">${block.label}</div><div data-edit="${ch.id}:${base}:html">${getValue(ch.id, `${base}:html`, block.html)}</div>`;
+        section.appendChild(wrap);
+      } else if (block.kind === 'proCon') {
+        const wrap = document.createElement('div');
+        wrap.className = 'pro-con';
+        wrap.innerHTML = `<div class="pro"><span class="label">优点</span><span data-edit="${ch.id}:${base}:pros">${getValue(ch.id, `${base}:pros`, block.pros)}</span></div><div class="con"><span class="label">缺点</span><span data-edit="${ch.id}:${base}:cons">${getValue(ch.id, `${base}:cons`, block.cons)}</span></div>`;
+        section.appendChild(wrap);
+      } else if (block.kind === 'compareTable') {
+        const table = document.createElement('table');
+        table.className = 'compare-table';
+        const thead = '<thead><tr>' + block.headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead>';
+        const tbody = '<tbody>' + block.rows.map((r, rIdx) =>
+          '<tr>' + r.map((c, cIdx) => `<td data-edit="${ch.id}:${base}:r${rIdx}c${cIdx}">${getValue(ch.id, `${base}:r${rIdx}c${cIdx}`, c)}</td>`).join('') + '</tr>'
+        ).join('') + '</tbody>';
+        table.innerHTML = thead + tbody;
+        section.appendChild(table);
+      }
+    });
+
+    const note = document.createElement('div');
+    note.className = 'my-note';
+    note.innerHTML = `<span class="label">我的批注</span><p data-note="${ch.id}">${myNotes[ch.id] || '在这里写下你的思考、疑问、或联想。'}</p>`;
+    section.appendChild(note);
+
+    container.appendChild(section);
+  });
+
+  // 给每个 data-edit 元素记录渲染后的"原始值"
+  // save() 时只保存与原始值不同的修改，避免把未编辑字段污染进 myEdits
+  document.querySelectorAll('[data-edit]').forEach(el => {
+    el.dataset.original = el.innerHTML;
+  });
+
+  applyEditable();
+  attachObserver();
+}
+
+function applyEditable() {
+  document.querySelectorAll('[data-edit], [data-note]').forEach(el => {
+    el.setAttribute('contenteditable', isEditing ? 'true' : 'false');
+  });
+}
+
+function attachObserver() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        document.querySelectorAll('.outline-item').forEach(i => {
+          i.classList.toggle('active', i.dataset.target === id);
+        });
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  document.querySelectorAll('.content-block').forEach(b => obs.observe(b));
+}
+
+const editToggle = document.getElementById('editToggle');
+const editBanner = document.getElementById('editBanner');
+const saveIndicator = document.getElementById('saveIndicator');
+
+function toggleEdit() {
+  isEditing = !isEditing;
+  editToggle.classList.toggle('active', isEditing);
+  editToggle.textContent = isEditing ? '✓ 完成' : '✎ 编辑';
+  editBanner.classList.toggle('show', isEditing);
+  applyEditable();
+  if (!isEditing) save();
+}
+
+async function save() {
+  // 只保存"用户真的改过"的字段到 myEdits
+  //
+  // 要点：不能把所有 [data-edit] 都一股脑存进 myEdits——因为页面渲染时
+  // 这些元素已经有默认值了，无差别保存会把"未编辑的原始值"也当成用户编辑存下来。
+  // 之后 chapters 里这些字段即使被改了，getValue 会优先返回 myEdits 里的旧快照，
+  // 导致"Claude 改了笔记但用户看不到"的 bug。
+  //
+  // 正确做法：对比 data-original（渲染时记下的原始值），只有变化了才存。
+  document.querySelectorAll('[data-edit]').forEach(el => {
+    const key = el.dataset.edit;
+    const current = el.innerHTML;
+    const original = el.dataset.original;
+    if (current !== original) {
+      // 用户真的改了，存进 myEdits
+      myEdits[key] = current;
+    } else {
+      // 没改 或 已改回原样——清掉 myEdits 里的残留
+      delete myEdits[key];
+    }
+  });
+  document.querySelectorAll('[data-note]').forEach(el => {
+    myNotes[el.dataset.note] = el.innerHTML;
+  });
+  try {
+    // 注意：只存 myEdits 和 myNotes，不存 chapters
+    // chapters 以 HTML 文件里的定义为准，storage 不干预
+    await window.storage.set(STORAGE_KEY, JSON.stringify({ myEdits, myNotes }));
+    saveIndicator.textContent = '已保存';
+    saveIndicator.classList.add('show');
+    setTimeout(() => saveIndicator.classList.remove('show'), 1500);
+  } catch(e) {
+    saveIndicator.textContent = '保存失败';
+    saveIndicator.classList.add('show');
+  }
+}
+
+async function load() {
+  // 只读 myEdits 和 myNotes，不读 chapters——让 HTML 文件里的 chapters
+  // 始终是权威来源。这样 Claude 更新 HTML 时，用户的修改和批注会叠加在新内容上
+  try {
+    const r = await window.storage.get(STORAGE_KEY);
+    if (r) {
+      const data = JSON.parse(r.value);
+      myEdits = data.myEdits || {};
+      myNotes = data.myNotes || {};
+    }
+  } catch(e) {}
+}
+
+editToggle.addEventListener('click', toggleEdit);
+document.addEventListener('keydown', e => {
+  if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    toggleEdit();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    save();
+  }
+});
+
+const layout = document.getElementById('layout');
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  layout.classList.toggle('sidebar-collapsed');
+  document.getElementById('sidebarToggle').textContent = layout.classList.contains('sidebar-collapsed') ? '›' : '‹';
+});
+
+(async () => {
+  await load();
+  render();
+})();
+</script>
+</body>
+</html>
