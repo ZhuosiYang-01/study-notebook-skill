@@ -2,6 +2,12 @@
 
 一个 Claude Skill，带你**先学后记**，先和 Claude 对话学习一个领域，每讲完一节，Claude 同步把这节内容整理进一份结构化、可编辑、可批注、可持续迭代的 HTML 学习笔记。
 
+![学习笔记渲染效果](https://github.com/user-attachments/assets/50261564-df7e-4ff3-9e4b-9addb5fc76e4)
+
+![横向对比表格](https://github.com/user-attachments/assets/71b979f3-5cda-4938-aea4-66206414ed91)
+
+![优缺点对比](https://github.com/user-attachments/assets/905cc397-f400-4de5-bc44-0566b2ac0c39)
+
 ---
 
 ## 推荐使用场景
